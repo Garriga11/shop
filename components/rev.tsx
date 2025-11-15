@@ -7,7 +7,7 @@ export default function RevenueCard() {
   const [revenue, setRevenue] = useState(0)
 
   useEffect(() => {
-    getTotalRevenue().then(setRevenue)
+    getTotalRevenue().then(data => setRevenue(data.totalRevenue))
   }, [])
   return (
     <div className="p-4 rounded shadow bg-green-100 max-w-sm">
