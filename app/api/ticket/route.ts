@@ -1,16 +1,12 @@
 // app/api/tickets/route.ts
 import { NextResponse } from 'next/server';
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-import prisma from "@/lib/prisma";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "USER") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
 
-  const { device, deviceSN, location, accountId, description } = await request.json();
+  const { device, deviceSN, location, accountId, description, customerName, customerPhone } = await request.json();
 
   const ticket = await prisma.ticket.create({
     data: {
@@ -19,8 +15,9 @@ export async function POST(request: Request) {
       location,
       accountId,
       description,
+      customerName,
+      customerPhone,
       status: "OPEN",
-      userId: session.user.id,
     },
   });
 

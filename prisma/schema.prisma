@@ -48,6 +48,17 @@ model Ticket {
   ticketParts   TicketPart[]
 }
 
+model Part {
+  id          String        @id @default(uuid())
+  name        String
+  stock       Int
+  price       Float
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  InvoiceItem InvoiceItem[]
+}
+
+
 model Account {
   id        String    @id @default(cuid())
   name      String

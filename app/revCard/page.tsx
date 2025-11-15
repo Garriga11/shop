@@ -5,12 +5,12 @@ function Total({ totalRevenue }: { totalRevenue: number }) {
 }
 
 export default async function RevenuePage() {
-  const totalRevenue = await getTotalRevenue();
+  const revenueData = await getTotalRevenue();
 
   
   return (
     <main className="space-y-6 p-6">
-      <Total totalRevenue={totalRevenue} />
+      <Total totalRevenue={revenueData.totalRevenue} />
       {/* other components like AccountForm */}
     </main>
   )

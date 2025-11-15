@@ -1,31 +1,35 @@
-// app/dashboard/admin/page.tsx
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth";
-import MetricCard from "@/components/metricCard";
+
 import prisma from "@/lib/prisma";
 import { TicketIcon, UserIcon, CurrencyDollarIcon, ChartBarIcon } from "@heroicons/react/16/solid";
+import MetricCard from "@/components/metricCard";
 import RecentTickets from "@/components/recentTickets";
-import { getDashboardRevenue } from "@/app/revenue/actions-safe";
 import Link from "next/link";
+import { getTotalRevenue } from "@/app/revCard/action";
+
+interface RevenueData {
+  totalRevenue: number;
+  totalDue: number;
+  totalInvoiced: number;
+  collectionRate: number;
+  averageInvoice: number;
+  paymentsByMethod: any;
+  recentInvoices: any[];
+}
 
 
 
 export default async function AdminDashboardPage() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    // handle unauthenticated...
-  }
 
-  // Fetch all dashboard data in parallel for better performance
-  const [total, open, closed, users, revenueResult] = await Promise.all([
-    prisma.ticket.count(),
-    prisma.ticket.count({ where: { status: "OPEN" } }),
-    prisma.ticket.count({ where: { status: "CLOSED" } }),
-    prisma.user.count(),
-    getDashboardRevenue(), // Get revenue data
-  ]);
 
-  // Fetch the five most recent tickets, including serialNumber
+// Fetch all dashboard data in parallel for better performance
+const [total, open, closed, users] = await Promise.all([
+  prisma.ticket.count(),
+  prisma.ticket.count({ where: { status: "OPEN" } }),
+  prisma.ticket.count({ where: { status: "CLOSED" } }),
+  prisma.user.count(),
+]);
+
+// Fetch the five most recent tickets, including serialNumber
   const recentTicketsRaw = await prisma.ticket.findMany({
     orderBy: { createdAt: "desc" },
     take: 5,
@@ -44,8 +48,15 @@ export default async function AdminDashboardPage() {
     serialNumber: ticket.deviceSN,
   }));
 
-  // Revenue data - safely handle potential errors
-  const revenueData = revenueResult.success ? revenueResult.data : null;
+  // Fetch revenue data - safely handle potential errors
+  let revenueData: RevenueData | null = null;
+  try {
+    // Fetch actual revenue data
+    revenueData = await getTotalRevenue() as RevenueData;
+  } catch (error) {
+    console.error('Error fetching revenue data:', error);
+    revenueData = null;
+  }
 
   return (
     <div className="p-6 space-y-8">
@@ -81,22 +92,22 @@ export default async function AdminDashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <MetricCard 
             title="Total Revenue" 
-            value={`$${revenueData.totalRevenue.toFixed(2)}`} 
+            value={`$${revenueData?.totalRevenue?.toFixed(2) || '0.00'}`} 
             icon={<CurrencyDollarIcon />} 
           />
           <MetricCard 
             title="Outstanding" 
-            value={`$${revenueData.totalDue.toFixed(2)}`} 
+            value={`$${revenueData?.totalDue?.toFixed(2) || '0.00'}`} 
             icon={<ChartBarIcon />} 
           />
           <MetricCard 
             title="Collection Rate" 
-            value={`${revenueData.collectionRate.toFixed(1)}%`} 
+            value={`${revenueData?.collectionRate?.toFixed(1) || '0.0'}%`} 
             icon={<ChartBarIcon />} 
           />
           <MetricCard 
             title="Avg Invoice" 
-            value={`$${revenueData.averageInvoice.toFixed(2)}`} 
+            value={`$${revenueData?.averageInvoice?.toFixed(2) || '0.00'}`} 
             icon={<CurrencyDollarIcon />} 
           />
         </div>
@@ -136,11 +147,11 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Payment Methods (if revenue data available) */}
-      {revenueData && Object.keys(revenueData.paymentsByMethod).length > 0 && (
+      {revenueData && typeof revenueData === 'object' && (revenueData as any).paymentsByMethod && Object.keys((revenueData as any).paymentsByMethod).length > 0 && (
         <div className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">💳 Payment Methods Breakdown</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Object.entries(revenueData.paymentsByMethod).map(([method, info]) => {
+            {Object.entries((revenueData as any).paymentsByMethod).map(([method, info]) => {
               const typedInfo = info as { total: number; count: number };
               return (
                 <div key={method} className="bg-gray-50 p-4 rounded-lg">
@@ -161,7 +172,7 @@ export default async function AdminDashboardPage() {
       )}
 
       {/* Recent Invoices */}
-      {revenueData && revenueData.recentInvoices.length > 0 && (
+      {revenueData && typeof revenueData === 'object' && (revenueData as any).recentInvoices && (revenueData as any).recentInvoices.length > 0 && (
         <div className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">🧾 Recent Invoices</h2>
           <div className="overflow-x-auto">
@@ -177,7 +188,7 @@ export default async function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {revenueData.recentInvoices.slice(0, 5).map((invoice: any) => (
+                {(revenueData as any).recentInvoices.slice(0, 5).map((invoice: any) => (
                   <tr key={invoice.id} className="border-b border-gray-100">
                     <td className="py-2">{invoice.ticket?.customerName || 'No customer'}</td>
                     <td className="py-2">{invoice.ticket?.device || 'No device'}</td>

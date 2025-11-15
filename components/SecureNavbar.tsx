@@ -31,7 +31,7 @@ export default function SecureNavbar() {
     ...(dashboardNavItem ? [dashboardNavItem] : []),
     { name: 'Tickets', href: '/ticket', icon: '🎫' },
     { name: 'New Ticket', href: '/ticket/new', icon: '➕' },
-    { name: 'Close Ticket', href: '/closeTicket', icon: '✅', roles: ['Admin User', 'Tech User'] },
+   
     { name: 'Inventory', href: '/inventory', icon: '📦', roles: ['Admin User', 'Tech User'] },
     { name: 'Part Mapping', href: '/inventory/mapping', icon: '🔗', roles: ['Admin User'] },
     { name: 'Revenue', href: '/revenue', icon: '💰', roles: ['Admin User'] },

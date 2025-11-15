@@ -1,26 +1,25 @@
-'use client'
-
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-
 import { PrismaClient } from '@prisma/client';
 import InventoryClient from './InventoryClient';
+import Link from 'next/link';
 
 const prisma = new PrismaClient();
 
 export default async function InventoryPage() {
-  const inventory = await prisma.inventoryItem.findMany({
+  const inventoryData = await prisma.inventoryItem.findMany({
     orderBy: { createdAt: 'desc' },
   });
-  return <InventoryClient inventory={inventory} />;
-    }
-  });
 
-  if (status === 'loading' || loading) {
-    return <div className="p-6">Loading...</div>;
-  }
+  // Convert null values to undefined to match InventoryItem interface
+  const inventory = inventoryData.map(item => ({
+    ...item,
+    description: item.description ?? undefined,
+    category: item.category ?? undefined,
+    deviceModel: item.deviceModel ?? undefined,
+    binNumber: item.binNumber ?? undefined,
+    location: item.location ?? undefined,
+    sellPrice: item.sellPrice ?? undefined,
+    buyPrice: item.sellPrice ?? undefined,
+  }));
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -40,176 +39,28 @@ export default async function InventoryPage() {
             Adjust Stock
           </Link>
           <Link 
-            href="/inventory/reorder-report"
-            className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
+            href="/inventory/mapping"
+            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
           >
-            Reorder Report
+            Part Mapping
           </Link>
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className="mb-6 flex flex-wrap gap-4 items-center">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-3 py-1 rounded ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+      {inventory.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg shadow">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">No Inventory Items</h2>
+          <p className="text-gray-600 mb-6">Get started by adding your first inventory item.</p>
+          <Link 
+            href="/inventory/add"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            All Items
-          </button>
-          <button
-            onClick={() => setFilter('low-stock')}
-            className={`px-3 py-1 rounded ${filter === 'low-stock' ? 'bg-orange-600 text-white' : 'bg-gray-200'}`}
-          >
-            Low Stock
-          </button>
-          <button
-            onClick={() => setFilter('out-of-stock')}
-            className={`px-3 py-1 rounded ${filter === 'out-of-stock' ? 'bg-red-600 text-white' : 'bg-gray-200'}`}
-          >
-            Out of Stock
-          </button>
-          <button
-            onClick={() => setFilter('needs-reorder')}
-            className={`px-3 py-1 rounded ${filter === 'needs-reorder' ? 'bg-yellow-600 text-white' : 'bg-gray-200'}`}
-          >
-            Needs Reorder
-          </button>
+            Add First Item
+          </Link>
         </div>
-        
-        <input
-          type="text"
-          placeholder="Search by name, SKU, or device model..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-3 py-2 border rounded-lg flex-1 min-w-64"
-        />
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-blue-100 p-4 rounded-lg">
-          <h3 className="font-semibold text-blue-800">Total Items</h3>
-          <p className="text-2xl font-bold text-blue-600">{inventory.filter(i => i.isActive).length}</p>
-        </div>
-        <div className="bg-orange-100 p-4 rounded-lg">
-          <h3 className="font-semibold text-orange-800">Low Stock</h3>
-          <p className="text-2xl font-bold text-orange-600">
-            {inventory.filter(i => i.quantity <= i.reorderLevel).length}
-          </p>
-        </div>
-        <div className="bg-red-100 p-4 rounded-lg">
-          <h3 className="font-semibold text-red-800">Out of Stock</h3>
-          <p className="text-2xl font-bold text-red-600">
-            {inventory.filter(i => i.quantity === 0).length}
-          </p>
-        </div>
-        <div className="bg-green-100 p-4 rounded-lg">
-          <h3 className="font-semibold text-green-800">Total Value</h3>
-          <p className="text-2xl font-bold text-green-600">
-            ${inventory.reduce((sum, item) => sum + (item.quantity * item.cost), 0).toFixed(2)}
-          </p>
-        </div>
-      </div>
-
-      {/* Inventory Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                SKU
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Item Name
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Device Model
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Quantity
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Cost
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredInventory.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50">
-                <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {item.sku}
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {item.name}
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {item.deviceModel || '-'}
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {item.category || '-'}
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    item.quantity === 0 ? 'bg-red-100 text-red-800' :
-                    item.quantity <= item.reorderLevel ? 'bg-orange-100 text-orange-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    {item.quantity}
-                  </span>
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  ${item.cost.toFixed(2)}
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  {item.quantity === 0 ? (
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                      Out of Stock
-                    </span>
-                  ) : item.quantity <= item.reorderLevel ? (
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
-                      Low Stock
-                    </span>
-                  ) : (
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                      In Stock
-                    </span>
-                  )}
-                </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                  <Link
-                    href={`/inventory/edit/${item.id}`}
-                    className="text-blue-600 hover:text-blue-900 mr-4"
-                  >
-                    Edit
-                  </Link>
-                  <Link
-                    href={`/inventory/history/${item.id}`}
-                    className="text-green-600 hover:text-green-900"
-                  >
-                    History
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        
-        {filteredInventory.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-gray-500">No inventory items found.</p>
-          </div>
-        )}
-      </div>
+      ) : (
+        <InventoryClient inventory={inventory}/>
+      )}
     </div>
   );
 }

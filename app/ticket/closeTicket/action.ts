@@ -12,7 +12,7 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
 
   const ticket = await prisma.ticket.update({
     where: { id: ticketId },
-    data: { status: 'closed' },
+    data: { status: 'CLOSED' },
     include: { 
       account: true,
       repairType: {
@@ -90,6 +90,19 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
       total,
       paidAmount,
       dueAmount,
+    },
+  });
+
+  // Create revenue record for the completed repair
+  await prisma.revenue.create({
+    data: {
+      amount: total,
+      source: 'REPAIR_SERVICE',
+      description: `Revenue from ticket ${ticket.id} - ${ticket.device || 'Device repair'}`,
+      invoiceId: invoice.id,
+      ticketId: ticket.id,
+      accountId: ticket.accountId as string,
+      paymentDate: new Date(),
     },
   });
 
