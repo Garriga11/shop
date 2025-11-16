@@ -29,24 +29,21 @@ const [total, open, closed, users] = await Promise.all([
   prisma.user.count(),
 ]);
 
-// Fetch the five most recent tickets, including serialNumber
-  const recentTicketsRaw = await prisma.ticket.findMany({
+// Fetch the most recent tickets with comprehensive data
+  const recentTickets = await prisma.ticket.findMany({
     orderBy: { createdAt: "desc" },
-    take: 5,
+    take: 10, // Show more recent tickets
     select: {
       id: true,
+      device: true,
+      deviceSN: true,
       location: true,
       status: true,
       createdAt: true,
-      deviceSN: true,
+      customerName: true,
+      description: true,
     },
   });
-
-  // Map deviceSN to serialNumber to match RecentTickets prop requirements
-  const recentTickets = recentTicketsRaw.map(ticket => ({
-    ...ticket,
-    serialNumber: ticket.deviceSN,
-  }));
 
   // Fetch revenue data - safely handle potential errors
   let revenueData: RevenueData | null = null;
