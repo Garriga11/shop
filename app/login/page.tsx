@@ -61,8 +61,51 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-sm mx-auto">
+    <div className="max-w-md mx-auto">
       <h2 className="text-2xl font-semibold mb-4 p-4">Login</h2>
+      
+      {/* Demo Credentials Section */}
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 className="text-lg font-medium text-blue-800 mb-2">🚀 Demo Access</h3>
+        <p className="text-sm text-blue-700 mb-3">For employers and demo purposes, use these credentials:</p>
+        
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between items-center p-2 bg-white rounded border">
+            <div>
+              <strong className="text-blue-600">Admin User:</strong>
+              <div className="text-gray-600">admin@example.com / password123</div>
+            </div>
+            <button 
+              type="button"
+              onClick={() => {
+                setEmail('admin@example.com');
+                setPassword('password123');
+              }}
+              className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+            >
+              Use
+            </button>
+          </div>
+          
+          <div className="flex justify-between items-center p-2 bg-white rounded border">
+            <div>
+              <strong className="text-green-600">Tech User:</strong>
+              <div className="text-gray-600">tech@example.com / password123</div>
+            </div>
+            <button 
+              type="button"
+              onClick={() => {
+                setEmail('tech@example.com');
+                setPassword('password123');
+              }}
+              className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+            >
+              Use
+            </button>
+          </div>
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block">Email</label>
