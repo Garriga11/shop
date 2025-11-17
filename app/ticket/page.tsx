@@ -7,9 +7,10 @@ const prisma = new PrismaClient();
 export default async function TicketsPage({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const page = Number(searchParams.page) || 1;
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
   const pageSize = 20;
   const skip = (page - 1) * pageSize;
 
