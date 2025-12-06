@@ -35,23 +35,25 @@ export default async function AddRepairTypePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Device Type *</label>
+              <label className="block text-sm font-medium mb-1">Device Type</label>
               <input
                 name="deviceType"
-                placeholder="e.g., iPhone, Samsung, iPad"
-                required
+                placeholder="e.g., iPhone, Samsung, Universal (optional)"
+                defaultValue="Universal"
                 className="w-full p-2 border rounded"
               />
+              <p className="text-xs text-gray-500 mt-1">Leave as "Universal" for generic repair types</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Device Model *</label>
+              <label className="block text-sm font-medium mb-1">Device Model</label>
               <input
                 name="deviceModel"
-                placeholder="e.g., iPhone 14, Galaxy S21"
-                required
+                placeholder="e.g., All Models, Universal (optional)"
+                defaultValue="All Models"
                 className="w-full p-2 border rounded"
               />
+              <p className="text-xs text-gray-500 mt-1">Use "All Models" for repairs that apply to multiple devices</p>
             </div>
 
             <div>
