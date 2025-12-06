@@ -81,7 +81,7 @@ export default function SecureNavbar() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between flex space-between items-center h-18">
             <Link href="/" className="text-sm font-bold text-gray-800 p-2">
-              🔧 Repair Shop
+               Repair Shop
             </Link>
             <Link 
               href="/login" 

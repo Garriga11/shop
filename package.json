@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
-    
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -34,7 +33,7 @@
     "@types/react": "^19.2.1",
     "@types/react-dom": "^19.2.1",
     "i": "^0.3.7",
-    "prisma": "^7.1.0",
+    "prisma": "^6.19.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

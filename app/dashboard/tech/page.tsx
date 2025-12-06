@@ -54,7 +54,7 @@ export default async function TechDashboardPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">🔧 Tech Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900"> Tech Dashboard</h1>
           <p className="text-gray-600">Welcome back, {session?.user?.name}!</p>
         </div>
         <div className="flex gap-2">
@@ -62,13 +62,13 @@ export default async function TechDashboardPage() {
             href="/ticket/new" 
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            ➕ New Ticket
+            New Ticket
           </Link>
           <Link 
             href="/closeTicket" 
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
-            ✅ Close Ticket
+             Close Ticket
           </Link>
         </div>
       </div>
@@ -85,19 +85,19 @@ export default async function TechDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Status Chart */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">📈 Ticket Status Overview</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4"> Ticket Status Overview</h2>
           <StatusChart data={chartData} />
         </div>
 
         {/* Quick Actions */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">⚡ Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4"> Quick Actions</h2>
           <div className="grid grid-cols-1 gap-3">
             <Link 
               href="/ticket/new" 
               className="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
             >
-              <span className="text-2xl mr-3">➕</span>
+              <span className="text-2xl mr-3"></span>
               <div>
                 <div className="font-semibold text-blue-900">Create New Ticket</div>
                 <div className="text-sm text-blue-600">Add a new repair request</div>
@@ -108,7 +108,7 @@ export default async function TechDashboardPage() {
               href="/closeTicket" 
               className="flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
             >
-              <span className="text-2xl mr-3">✅</span>
+              <span className="text-2xl mr-3"></span>
               <div>
                 <div className="font-semibold text-green-900">Close Ticket</div>
                 <div className="text-sm text-green-600">Complete and invoice tickets</div>
@@ -119,7 +119,7 @@ export default async function TechDashboardPage() {
               href="/payment/manual" 
               className="flex items-center p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
             >
-              <span className="text-2xl mr-3">💳</span>
+              <span className="text-2xl mr-3"></span>
               <div>
                 <div className="font-semibold text-purple-900">Process Payment</div>
                 <div className="text-sm text-purple-600">Record customer payments</div>
@@ -131,7 +131,7 @@ export default async function TechDashboardPage() {
 
       {/* Recent Tickets */}
       <div className="bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">🎫 Recent Tickets</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4"> Recent Tickets</h2>
         <RecentTickets tickets={recentTickets} />
       </div>
     </div>

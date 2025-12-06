@@ -65,13 +65,13 @@ const [total, open, closed, users] = await Promise.all([
             href="/payment/manual" 
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
-            💰 Process Payment
+           Process Payment
           </Link>
           <Link 
             href="/revenue" 
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            📊 Full Revenue Report
+            Full Revenue Report
           </Link>
         </div>
       </div>
@@ -114,7 +114,7 @@ const [total, open, closed, users] = await Promise.all([
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Ticket Status Summary */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">📈 Ticket Status Overview</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4"> Ticket Status Overview</h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-green-50 p-4 rounded-lg text-center">
               <div className="text-2xl font-bold text-green-600">{open}</div>
@@ -138,7 +138,7 @@ const [total, open, closed, users] = await Promise.all([
 
         {/* Recent Tickets */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">🎫 Recent Tickets</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Tickets</h2>
           <RecentTickets tickets={recentTickets} />
         </div>
       </div>
@@ -171,7 +171,7 @@ const [total, open, closed, users] = await Promise.all([
       {/* Recent Invoices */}
       {revenueData && typeof revenueData === 'object' && (revenueData as any).recentInvoices && (revenueData as any).recentInvoices.length > 0 && (
         <div className="bg-white p-6 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">🧾 Recent Invoices</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-4"> Recent Invoices</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
