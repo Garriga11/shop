@@ -1,5 +1,8 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { addInventoryItem } from '../actions';
-import { redirect } from 'next/navigation';
 
 const deviceCategories = [
   'Screens',
@@ -29,11 +32,69 @@ const deviceModels = [
   'Other'
 ];
 
+// Category abbreviations for SKU
+const categoryAbbr: Record<string, string> = {
+  'Screens': 'SCR',
+  'Charging Ports': 'CHG',
+  'Batteries': 'BAT',
+  'Cameras': 'CAM',
+  'Speakers': 'SPK',
+  'Microphones': 'MIC',
+  'Tools': 'TLS',
+  'Adhesives': 'ADH',
+  'Screws': 'SCW',
+  'Other': 'OTH'
+};
+
+// Device model abbreviations
+const modelAbbr: Record<string, string> = {
+  'iPhone 13': 'IP13',
+  'iPhone 14': 'IP14',
+  'iPhone 15': 'IP15',
+  'Samsung Galaxy S21': 'SG21',
+  'Samsung Galaxy S22': 'SG22',
+  'Samsung Galaxy S23': 'SG23',
+  'iPad Air': 'IPA',
+  'iPad Pro': 'IPP',
+  'Google Pixel 7': 'GP7',
+  'Google Pixel 8': 'GP8',
+  'Universal': 'UNV',
+  'Other': 'OTH'
+};
+
 export default function AddInventoryPage() {
-  async function handleSubmit(formData: FormData) {
-    'use server';
-    await addInventoryItem(formData);
-    redirect('/inventory');
+  const router = useRouter();
+  const [category, setCategory] = useState('');
+  const [deviceModel, setDeviceModel] = useState('');
+  const [sku, setSku] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const generateSKU = () => {
+    if (!deviceModel || !category) {
+      alert('Please select both device model and category first');
+      return;
+    }
+    
+    const modelCode = modelAbbr[deviceModel] || 'XXX';
+    const catCode = categoryAbbr[category] || 'XXX';
+    const randomNum = Math.floor(Math.random() * 9000) + 1000;
+    const generatedSku = `${modelCode}-${catCode}-${randomNum}`;
+    setSku(generatedSku);
+  };
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      await addInventoryItem(formData);
+      router.push('/inventory');
+    } catch (error) {
+      console.error('Error adding inventory:', error);
+      alert('Failed to add inventory item');
+      setLoading(false);
+    }
   }
 
   return (
@@ -43,7 +104,7 @@ export default function AddInventoryPage() {
         <h1 className="text-3xl font-bold">Add New Inventory Item</h1>
       </div>
 
-      <form action={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
         {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -54,10 +115,19 @@ export default function AddInventoryPage() {
               <input
                 type="text"
                 name="sku"
+                value={sku}
+                onChange={(e) => setSku(e.target.value)}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-                placeholder="e.g., IPH13-SCR-001"
+                placeholder="e.g., IP14-CHG-1234"
               />
+              <button
+                type="button"
+                onClick={generateSKU}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 whitespace-nowrap"
+              >
+                Generate
+              </button>
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Select device model and category first, then click Generate
@@ -99,11 +169,13 @@ export default function AddInventoryPage() {
             </label>
             <select
               name="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Category</option>
-              {deviceCategories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {deviceCategories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
           </div>
@@ -114,6 +186,8 @@ export default function AddInventoryPage() {
             </label>
             <select
               name="deviceModel"
+              value={deviceModel}
+              onChange={(e) => setDeviceModel(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Device Model</option>
@@ -212,9 +286,10 @@ export default function AddInventoryPage() {
         <div className="flex gap-4 pt-6">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+            disabled={loading}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
           >
-            Add Inventory Item
+            {loading ? 'Adding...' : 'Add Inventory Item'}
           </button>
           <a
             href="/inventory"
