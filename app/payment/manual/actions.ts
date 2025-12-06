@@ -1,6 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 // Get all unpaid invoices
 export async function getUnpaidInvoices() {
@@ -117,6 +118,15 @@ export async function processManualPayment(data: {
         data: { status: 'COMPLETED' },
       });
     }
+
+    // Revalidate all relevant pages
+    revalidatePath('/payment/manual');
+    revalidatePath('/dashboard/admin');
+    revalidatePath('/dashboard/tech');
+    revalidatePath('/dashboard/user');
+    revalidatePath('/ticket');
+    revalidatePath('/revenue');
+    revalidatePath('/invoice');
 
     return {
       success: true,

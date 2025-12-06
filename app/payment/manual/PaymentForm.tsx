@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import  { processManualPayment } from '@/app/payment/manual/actions';
 
 interface Invoice {
@@ -20,6 +21,7 @@ interface PaymentFormProps {
 }
 
 export default function PaymentForm({ invoices }: PaymentFormProps) {
+  const router = useRouter();
   const [selectedInvoice, setSelectedInvoice] = useState<string>('');
   const [paymentAmount, setPaymentAmount] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('CASH');
@@ -65,8 +67,8 @@ export default function PaymentForm({ invoices }: PaymentFormProps) {
         setSelectedInvoice('');
         setPaymentAmount('');
         setNotes('');
-        // Refresh page to show updated data
-        window.location.reload();
+        // Refresh the page data
+        router.refresh();
       } else {
         setMessage({ type: 'error', text: result.error || 'Failed to process payment' });
       }
