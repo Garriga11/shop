@@ -25,9 +25,11 @@ function formatDate(date: Date | string) {
   return new Date(date).toLocaleString();
 }
 
-export default async function InventoryHistoryPage({ params }: any) {
+export default async function InventoryHistoryPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  
   const item = await prisma.inventoryItem.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!item) {
@@ -39,7 +41,7 @@ export default async function InventoryHistoryPage({ params }: any) {
   }
 
   const movements = await prisma.stockMovement.findMany({
-    where: { inventoryId: params.id },
+    where: { inventoryId: id },
     orderBy: { createdAt: 'desc' },
     include: { user: true },
   });
@@ -107,7 +109,7 @@ export default async function InventoryHistoryPage({ params }: any) {
         <Link href="/inventory">
           <Button variant="secondary">Back to Inventory</Button>
         </Link>
-        <Link href={`/inventory/edit/${params.id}`}>
+        <Link href={`/inventory/edit/${id}`}>
           <Button variant="default">Edit Item</Button>
         </Link>
       </div>

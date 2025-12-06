@@ -73,13 +73,13 @@ export default function LoginPage() {
           <div className="flex justify-between items-center p-2 bg-white rounded border">
             <div>
               <strong className="text-blue-600">Admin User:</strong>
-              <div className="text-gray-600">admin@example.com / password123</div>
+              <div className="text-gray-600">admin@example.com / adminpassword123</div>
             </div>
             <button 
               type="button"
               onClick={() => {
                 setEmail('admin@example.com');
-                setPassword('password123');
+                setPassword('adminpassword123');
               }}
               className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
             >
@@ -90,13 +90,13 @@ export default function LoginPage() {
           <div className="flex justify-between items-center p-2 bg-white rounded border">
             <div>
               <strong className="text-green-600">Tech User:</strong>
-              <div className="text-gray-600">tech@example.com / password123</div>
+              <div className="text-gray-600">tech@example.com / techpassword123</div>
             </div>
             <button 
               type="button"
               onClick={() => {
                 setEmail('tech@example.com');
-                setPassword('password123');
+                setPassword('techpassword123');
               }}
               className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
             >

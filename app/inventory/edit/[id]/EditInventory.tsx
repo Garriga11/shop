@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { updateInventoryItem, deleteInventoryItem } from './actions';
+import { updateInventoryItem, deleteInventoryItem } from '@/app/inventory/edit/[id]/actions';
 
 
 type InventoryItem = {

@@ -3,9 +3,11 @@ import prisma from '@/lib/prisma';
 import EditInventoryForm from '@/app/inventory/edit/[id]/EditInventory';
 import { notFound } from 'next/navigation';
 
-export default async function EditInventoryPage({ params }: any) {
+export default async function EditInventoryPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  
   const item = await prisma.inventoryItem.findUnique({
-    where: { id: params.id }
+    where: { id }
   });
 
   if (!item) {

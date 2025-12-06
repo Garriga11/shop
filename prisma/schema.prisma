@@ -57,7 +57,6 @@ model Part {
   updatedAt DateTime @updatedAt
 }
 
-
 model Account {
   id        String    @id @default(cuid())
   name      String
