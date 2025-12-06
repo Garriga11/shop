@@ -97,6 +97,19 @@ export async function processManualPayment(data: {
       },
     });
 
+    // Create revenue record for the payment
+    await prisma.revenue.create({
+      data: {
+        amount: data.amount,
+        source: 'PAYMENT',
+        description: `Payment received for Invoice #${data.invoiceId.slice(-8)} - ${data.method}${data.notes ? `: ${data.notes}` : ''}`,
+        invoiceId: data.invoiceId,
+        ticketId: invoice.ticketId,
+        accountId: invoice.accountId,
+        paymentDate: new Date(),
+      },
+    });
+
     // If invoice is fully paid, update ticket status to COMPLETED
     if (newDueAmount <= 0) {
       await prisma.ticket.update({
