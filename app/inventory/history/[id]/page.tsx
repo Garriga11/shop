@@ -91,7 +91,7 @@ export default async function InventoryHistoryPage({ params }: { params: Promise
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {movement.type === 'STOCK_OUT' ? '-' : '+'}{movement.quantity}
+                          {movement.type === 'STOCK_OUT' ? '-' : '+'}{Math.abs(movement.quantity)}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">{movement.reason}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{movement.user?.name || movement.user?.email || 'Unknown'}</td>

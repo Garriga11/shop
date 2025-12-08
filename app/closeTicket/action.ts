@@ -92,7 +92,7 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
         data: {
           inventoryId: part.id,
           type: 'STOCK_OUT',
-          quantity: -quantityToDeduct,
+          quantity: quantityToDeduct,
           reason: 'Used in repair',
           reference: `Ticket ${ticketId}`,
           userId: (session.user as any)?.id || null
@@ -163,6 +163,8 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
   revalidatePath('/dashboard/tech');
   revalidatePath('/dashboard/user');
   revalidatePath('/closeTicket');
+  revalidatePath('/inventory');
+  revalidatePath('/inventory/stock-movement');
   
   console.log(`♻️ Revalidated all pages to show new invoice`);
 

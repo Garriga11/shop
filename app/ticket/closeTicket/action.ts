@@ -48,7 +48,7 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
         data: {
           inventoryId: part.id,
           type: 'STOCK_OUT',
-          quantity: -1,
+          quantity: 1,
           reason: `Used for ticket ${ticket.id} - ${ticket.repairType.name}`,
           reference: ticket.id
         }
@@ -127,6 +127,8 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
   revalidatePath('/dashboard/admin');
   revalidatePath('/dashboard/tech');
   revalidatePath('/dashboard/user');
+  revalidatePath('/inventory');
+  revalidatePath('/inventory/stock-movement');
 
   return {
     invoiceId: invoice.id,
