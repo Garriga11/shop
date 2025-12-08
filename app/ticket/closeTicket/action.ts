@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 
 export async function closeTicketAndInvoice(ticketId: string, total: number) {
   // Check authentication
@@ -118,6 +119,14 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
       },
     },
   });
+
+  // Revalidate all relevant pages to show the new invoice
+  revalidatePath('/payment/manual');
+  revalidatePath('/invoice');
+  revalidatePath('/ticket');
+  revalidatePath('/dashboard/admin');
+  revalidatePath('/dashboard/tech');
+  revalidatePath('/dashboard/user');
 
   return {
     invoiceId: invoice.id,

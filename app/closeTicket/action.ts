@@ -3,6 +3,7 @@
 import  prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/auth';
+import { revalidatePath } from 'next/cache';
 
 export async function closeTicketAndInvoice(ticketId: string, total: number) {
   console.log(`🎫 Starting closeTicketAndInvoice for ticket: ${ticketId}, total: ${total}`);
@@ -153,6 +154,17 @@ export async function closeTicketAndInvoice(ticketId: string, total: number) {
   });
 
   console.log(`💰 Invoice created: ${invoice.id}, Due amount: ${dueAmount}`);
+
+  // Revalidate all relevant pages to show the new invoice
+  revalidatePath('/payment/manual');
+  revalidatePath('/invoice');
+  revalidatePath('/ticket');
+  revalidatePath('/dashboard/admin');
+  revalidatePath('/dashboard/tech');
+  revalidatePath('/dashboard/user');
+  revalidatePath('/closeTicket');
+  
+  console.log(`♻️ Revalidated all pages to show new invoice`);
 
   const result = {
     invoiceId: invoice.id,
