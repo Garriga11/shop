@@ -1,5 +1,5 @@
 
-import { addInvoice } from '../actions';
+import { addInvoice } from '@/app/invoice/actions';
 import { redirect } from 'next/navigation';
 
 export default function AddInvoicePage() {
