@@ -118,7 +118,7 @@ shop/
 
 This project is private and not licensed for public use.
 
-Built with  using Next.js and TypeScript
+Built using Next.js and TypeScript
 
 This app does not contain any vulnerabilities including the most recet React exploit CVE-2025-55182. All packages have been updated. 
 
